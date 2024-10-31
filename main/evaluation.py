@@ -1,3 +1,5 @@
+from datetime import datetime
+import os
 import numpy as np
 import pandas as pd
 
@@ -95,5 +97,23 @@ class Evaluation:
                 all_series_res[id] = {
                     f.__name__ : f(temp_df[self.y_col], temp_df[self.y_pred_col])for f in metrics
                 }
-            return pd.DataFrame(all_series_res).T
-            
+            self.evaluation_df = pd.DataFrame(all_series_res).T 
+            return self.evaluation_df
+
+
+    def save_evaluation(self, path: str, model: str) -> None:
+        """Salva ou adiciona as métricas de desempenho ao arquivo csv.
+
+        Args:
+            path (str): Diretório e nome do arquivo. Ex.: caminho/do/arquivo.csv
+            model (str): Nome do modelo a armazenar.
+        """
+        now = datetime.now().strftime(format='%Y-%m-%d %H:%M:%S')
+        file_exists = os.path.exists(path)
+        
+        self.evaluation_df.assign(modelo=model, time = now).to_csv(
+            path_or_buf=path, 
+            mode='a', 
+            header=not file_exists,
+            # index=False
+        )

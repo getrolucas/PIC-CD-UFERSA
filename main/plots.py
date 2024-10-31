@@ -1,10 +1,11 @@
 import pandas as pd
 from matplotlib import pyplot as plt
+import seaborn as sns
 from typing import Union
 import math
 
 
-__all__ = ['plot_time_series', 'plot_hist']
+__all__ = ['plot_time_series', 'plot_hist', 'plot_metrics']
 
 
 def plot_time_series(
@@ -94,4 +95,49 @@ def plot_hist(
             plot_n += 1
     
     plt.tight_layout()
+    plt.show()
+
+
+def _minmax(row: pd.Series) -> pd.Series:
+    min_val, max_val = row.min(), row.max()
+    return (row - min_val) / (max_val - min_val)
+
+
+def plot_metrics(
+        df: pd.DataFrame, 
+        hl_col: str | None = None, 
+        figsize : tuple = (6, 6)
+    ) -> None:
+    """
+    Plota as métricas de desempenho dos modelos por série em um heatmap 
+    possibilitando comparar visualmente qual modelo foi melhor.
+
+    Args:
+        df (pd.DataFrame): DataFrame com os dados a serem plotados.
+        hl_col (str): Nome da coluna a ser destacada.
+    """
+    plt.figure(figsize=figsize)
+    ax = sns.heatmap(
+        data=df.T.apply(_minmax).T,
+        annot=df,
+        fmt=".2f",
+        cbar=False,
+        cmap='Blues'
+    )
+
+    if hl_col:
+        if hl_col not in df.columns:
+            raise ValueError(f"A coluna '{hl_col}' não existe no DataFrame.")
+
+        col_idx = df.columns.get_loc(hl_col)
+        x_start = col_idx
+        x_end = col_idx + 1
+        y_start = 0
+        y_end = df.shape[0]
+
+        ax.add_line(plt.Line2D([x_start, x_start], [y_start, y_end], color="yellow", linewidth=3))  # Linha esquerda
+        ax.add_line(plt.Line2D([x_end, x_end], [y_start, y_end], color="yellow", linewidth=3))      # Linha direita
+        ax.add_line(plt.Line2D([x_start, x_end], [y_start, y_start], color="yellow", linewidth=3))  # Linha superior
+        ax.add_line(plt.Line2D([x_start, x_end], [y_end, y_end], color="yellow", linewidth=3))      # Linha inferior
+
     plt.show()
