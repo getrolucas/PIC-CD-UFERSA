@@ -71,9 +71,9 @@ def add_features(
     df['month'] = df[time_col].dt.month
     df['quarter'] = df[time_col].dt.quarter
     
-    if df_type == 'train':
-        df = _outliers(df)
-    else: 
-        df[['outlier_min', 'outlier_max']] = 0
-
-    return df
+    actions = {
+        'train': lambda df: _outliers(df),
+        'test': lambda df: df.assign(outlier_min=0, outlier_max=0)
+    }
+    
+    return actions.get(df_type, lambda df: df)(df)
