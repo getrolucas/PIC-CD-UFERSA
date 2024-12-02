@@ -3,5 +3,5 @@ Repositório destinado a armazenas dados e códigos desenvolvidos durante o proj
 1. [Corpo do Projeto](https://github.com/getrolucas/PIC-CD-UFERSA/blob/main/Projeto.md)
 2. [Análise Exploratória](https://github.com/getrolucas/PIC-CD-UFERSA/blob/main/notebooks/analise_exploratoria.ipynb)
 3. **Modelagem** \
-3.1. [Regressão Linear](https://github.com/getrolucas/PIC-CD-UFERSA/blob/main/notebooks/regressao_linear.ipynb)\
-3.2 [Random Forest]()
+3.1. [Regressão Linear, ARIMA e ETS](https://github.com/getrolucas/PIC-CD-UFERSA/blob/main/notebooks/regressao_linear.ipynb)\
+3.2 [Random Forest](https://github.com/getrolucas/PIC-CD-UFERSA/blob/main/notebooks/random_forest.ipynb)
