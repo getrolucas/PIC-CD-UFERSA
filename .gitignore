@@ -163,3 +163,5 @@ cython_debug/
 # python caches
 main/__pycache__
 */__pycache__
+
+catbost_info

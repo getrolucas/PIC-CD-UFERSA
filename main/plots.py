@@ -11,6 +11,7 @@ __all__ = ['plot_time_series', 'plot_hist', 'plot_metrics']
 def plot_time_series(
     df: pd.DataFrame,
     data_cols : list,
+    time_col : str = 'ds',
     id_col: str = 'unique_id', 
     ids: list | None = None,
     grid: tuple | None = None, 
@@ -45,7 +46,7 @@ def plot_time_series(
     
         plt.subplot(grid[0], grid[1], plot_n)
         for col in data_cols:
-            plt.plot(df_id[col])
+            plt.plot(df_id[time_col], df_id[col])
         plt.title(f'unique_id={id}', fontdict={'size': 10})
         plot_n += 1
 
@@ -106,7 +107,8 @@ def _minmax(row: pd.Series) -> pd.Series:
 def plot_metrics(
         df: pd.DataFrame, 
         hl_col: str | None = None, 
-        figsize : tuple = (6, 6)
+        figsize: tuple = (6, 6),
+        annot_kws : dict = {"fontsize": 10}
     ) -> None:
     """
     Plota as métricas de desempenho dos modelos por série em um heatmap 
@@ -115,6 +117,8 @@ def plot_metrics(
     Args:
         df (pd.DataFrame): DataFrame com os dados a serem plotados.
         hl_col (str): Nome da coluna a ser destacada.
+        figsize (tuple): Tamanho da figura.
+        annot_kws (dict): Kwargs para ajuste da fonte da anotação.
     """
     plt.figure(figsize=figsize)
     ax = sns.heatmap(
@@ -122,7 +126,8 @@ def plot_metrics(
         annot=df,
         fmt=".2f",
         cbar=False,
-        cmap='Blues'
+        cmap='Blues',
+        annot_kws=annot_kws
     )
 
     if hl_col:
@@ -135,9 +140,27 @@ def plot_metrics(
         y_start = 0
         y_end = df.shape[0]
 
-        ax.add_line(plt.Line2D([x_start, x_start], [y_start, y_end], color="yellow", linewidth=3))  # Linha esquerda
-        ax.add_line(plt.Line2D([x_end, x_end], [y_start, y_end], color="yellow", linewidth=3))      # Linha direita
-        ax.add_line(plt.Line2D([x_start, x_end], [y_start, y_start], color="yellow", linewidth=3))  # Linha superior
-        ax.add_line(plt.Line2D([x_start, x_end], [y_end, y_end], color="yellow", linewidth=3))      # Linha inferior
+        kwargs = {
+            'color' : "yellow", 
+            "linewidth": 3
+        }
+
+        ax.add_line(plt.Line2D([x_start, x_start], [y_start, y_end], **kwargs))  
+        ax.add_line(plt.Line2D([x_end, x_end], [y_start, y_end], **kwargs))      
+        ax.add_line(plt.Line2D([x_start, x_end], [y_start, y_start], **kwargs))  
+        ax.add_line(plt.Line2D([x_start, x_end], [y_end, y_end], **kwargs))      
+
+    for row_idx, (_, row) in enumerate(df.iterrows()):
+        min_col_idx = row.idxmin()
+        col_idx = df.columns.get_loc(min_col_idx)
+        ax.text(
+            x=col_idx + 0.99, 
+            y=row_idx - 0.05, 
+            s=f"min", 
+            ha='right', 
+            va='top', 
+            color='red', 
+            fontsize=6.5
+        )
 
     plt.show()
