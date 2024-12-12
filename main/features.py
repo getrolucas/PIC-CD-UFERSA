@@ -47,9 +47,8 @@ def _outliers(df : pd.DataFrame, target_col : str = 'y') -> pd.DataFrame:
     return df
 
 
-def add_features(
+def add_calendar_features(
         df : pd.DataFrame,
-        df_type : str,
         time_col : str = 'ds',
 ) -> pd.DataFrame:
     """Adiciona features de calendário e outliers ao dataframe.
@@ -73,12 +72,17 @@ def add_features(
     df['month'] = df[time_col].dt.month
     df['quarter'] = df[time_col].dt.quarter
 
-    actions = {
-        'train': lambda df: _outliers(df),
-        'test': lambda df: df.assign(outlier_min=0, outlier_max=0)
-    }
+    return df
+
+    def add_outlier_features():
+        pass
+
+    # actions = {
+    #     'train': lambda df: _outliers(df),
+    #     'test': lambda df: df.assign(outlier_min=0, outlier_max=0)
+    # }
     
-    return actions.get(df_type, lambda df: df)(df)
+    # return actions.get(df_type, lambda df: df)(df)
 
 
 def add_lagged_features(

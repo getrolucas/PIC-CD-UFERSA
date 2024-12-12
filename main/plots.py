@@ -106,61 +106,88 @@ def _minmax(row: pd.Series) -> pd.Series:
 
 def plot_metrics(
         df: pd.DataFrame, 
-        hl_col: str | None = None, 
         figsize: tuple = (6, 6),
-        annot_kws : dict = {"fontsize": 10}
+        annot_kws : dict = {"fontsize": 9},
+        low_is_better : bool = True,
+        title : str = 'Performance dos Modelos Para Cada Série Temporal',
+        caption : str = 'Métrica de desempenho: Raiz do Erro Quadrático Médio.'
     ) -> None:
+    
     """
     Plota as métricas de desempenho dos modelos por série em um heatmap 
     possibilitando comparar visualmente qual modelo foi melhor.
 
     Args:
         df (pd.DataFrame): DataFrame com os dados a serem plotados.
-        hl_col (str): Nome da coluna a ser destacada.
         figsize (tuple): Tamanho da figura.
         annot_kws (dict): Kwargs para ajuste da fonte da anotação.
+        low_is_better (bool): Define se a métrica é melhor quando o valor é menor.
+        title (str): Título do gráfico.
+        caption (str): Legenda do gráfico.
     """
-    plt.figure(figsize=figsize)
+    
+    title_fontsize = 12
+    cmap = 'Greens'
+    fontdict = {'weight': 'bold'}
+    title_fontdict = {'size': title_fontsize, 'weight':'bold'}
+    
+    # estrutura básica do gráfico com dados escalonados entre 0 e 1
+    fig = plt.figure(figsize=figsize)
+    
     ax = sns.heatmap(
-        data=df.T.apply(_minmax).T,
-        annot=df,
+        data=df.T.apply(_minmax),
         fmt=".2f",
         cbar=False,
-        cmap='Blues',
-        annot_kws=annot_kws
+        cmap=cmap + '_r' if low_is_better else cmap,
+        annot_kws=annot_kws,
+        # vmin=-0.25 if low_is_better else 0, 
+        # vmax=1 if low_is_better else 1.25,
     )
+    
+    
+    # anotando os maps com valores originais
+    # destacando os valores mínimos ou máximos
+    for i, (_, row) in enumerate(df.iterrows()):
+        best_col_idx = row.idxmin() if low_is_better else row.idxmax()
+        best_val = row[best_col_idx]
+        for ii, _ in enumerate(df.columns):
+            ax.text(
+                x=i + 0.5, 
+                y=ii + 0.5, 
+                s=f"{row.iloc[ii]:.2f}", 
+                ha='center',
+                va='center',
+                fontsize=annot_kws['fontsize'] + 0.75,
+                color='white' if row.iloc[ii] == best_val else 'black',
+                fontdict=fontdict if row.iloc[ii] == best_val else None
+            )
 
-    if hl_col:
-        if hl_col not in df.columns:
-            raise ValueError(f"A coluna '{hl_col}' não existe no DataFrame.")
 
-        col_idx = df.columns.get_loc(hl_col)
-        x_start = col_idx
-        x_end = col_idx + 1
-        y_start = 0
-        y_end = df.shape[0]
+    # configs do eixo X
+    plt.gca().xaxis.tick_top()
+    plt.xticks(fontsize=annot_kws['fontsize'], **fontdict)
+    plt.tick_params(axis='x', length=0)
+    plt.xlabel('')
 
-        kwargs = {
-            'color' : "yellow", 
-            "linewidth": 3
-        }
 
-        ax.add_line(plt.Line2D([x_start, x_start], [y_start, y_end], **kwargs))  
-        ax.add_line(plt.Line2D([x_end, x_end], [y_start, y_end], **kwargs))      
-        ax.add_line(plt.Line2D([x_start, x_end], [y_start, y_start], **kwargs))  
-        ax.add_line(plt.Line2D([x_start, x_end], [y_end, y_end], **kwargs))      
-
-    for row_idx, (_, row) in enumerate(df.iterrows()):
-        min_col_idx = row.idxmin()
-        col_idx = df.columns.get_loc(min_col_idx)
-        ax.text(
-            x=col_idx + 0.99, 
-            y=row_idx - 0.05, 
-            s=f"min", 
-            ha='right', 
-            va='top', 
-            color='red', 
-            fontsize=6.5
-        )
-
-    plt.show()
+    # configs do eixo Y
+    plt.yticks(fontsize=annot_kws['fontsize'])
+    plt.tick_params(axis='y', length=0)
+    plt.ylabel('')
+    
+    
+    # configs das linhas nas bordas do heatmap
+    ax.axvline(color='black', linewidth=1, clip_on=False, x=0, ymax=1) 
+    ax.axhline(color='black', linewidth=1, clip_on=False, y=0, xmin=0)    
+    
+    # configs do título do gráfico
+    plt.title(label=title, fontdict=title_fontdict , pad=30)
+    
+    
+    ## configs da legenda do gráfico
+    plt.figtext(
+        x=0.9, y=-0.0025, horizontalalignment='right', fontsize=annot_kws['fontsize'],
+        s=caption, fontdict=fontdict
+    )
+    
+    return ax.get_xticklabels()
