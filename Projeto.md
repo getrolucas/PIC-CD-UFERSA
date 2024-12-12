@@ -7,13 +7,12 @@ O objetivo é avaliar o desempenho dos modelos clássicos em comparação com as
 para diferentes tipos de dados, e determinar quais abordagens produzem os melhores resultados e trazem mais vantagens para aplicações reais.
 
 ## Metodologia
-- Coleta de Dados: Obter séries temporais de diversas fontes, incluindo dados financeiros, de saúde e climáticos. 
-Assegurar a diversidade e a relevância dos dados para uma análise robusta. 
+- Coleta de Dados: Obter séries temporais de fontes como dados financeiros, de saúde, climáticos, vendas etc. 
 - Análise Exploratória: Usar técnicas de visualização e estatísticas descritivas para compreender as características das séries temporais e identificar padrões.
 - Pré-processamento: Realizar a limpeza, transformações e normalizações dos dados para garantir sua qualidade e adequação para cada modelo.
-- Modelagem: Desenvolver e treinar modelos clássicos, de aprendizado de máquina e de deep learning. Comparar o desempenho desses modelos usando conjuntos de dados distintos.
+- Modelagem: Desenvolver e treinar modelos estatísticos, de aprendizado de máquina e de deep learning. Comparar o desempenho desses modelos usando conjuntos de dados distintos.
 - Avaliação: Medir a precisão dos modelos com métricas como MAE, RMSE, R² dentre outras. Ajustar os modelos com base nos resultados obtidos.
-  
+    
 ## Referências bibliográficas
 [1] Hyndman, R. J., & Athanasopoulos, G.
 **Forecasting: Principles and Practice.**
