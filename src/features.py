@@ -2,7 +2,7 @@ import pandas as pd
 import numpy as np
 import holidays
 from statsmodels.tsa.seasonal import seasonal_decompose
-from sklearn.linear_model import LassoLarsCV
+from sklearn.linear_model import LassoCV
 
 __all__ = [
     'decompose', 
@@ -125,7 +125,7 @@ def add_lagged_features(
     return df
 
 
-def feature_selection(
+def lasso_feature_selection(
         X : np.ndarray | pd.DataFrame, 
         y : np.ndarray | pd.Series
 ) -> list:
@@ -138,7 +138,7 @@ def feature_selection(
     Returns:
         list: Features selecionadas.
     """
-    lasso = LassoLarsCV(cv=5, max_n_alphas=10)
+    lasso = LassoCV()
     res = lasso.fit(X=X, y=y)
     features = res.feature_names_in_[lasso.coef_!=0]  
     
