@@ -25,7 +25,8 @@ def plot_time_series(
     grid: tuple | None = None,
     figsize: tuple = (12, 12),
     n_max: int | None = None,
-    title: str | None = None
+    title: str | None = None,
+    outliers_cols : list | None = None
 ) -> None:
     """Plot das séries temporais e das previsões.
 
@@ -65,6 +66,12 @@ def plot_time_series(
         ax = axes[i]
         for col in data_cols:
             ax.plot(df_id[time_col], df_id[col])
+
+        if outliers_cols is not None:
+            for outlier_col in outliers_cols:
+                outliers = df_id[df_id[outlier_col] != 0]
+                if not outliers.empty:
+                    ax.scatter(outliers[time_col], outliers[data_cols[0]], color='red')
 
         ax.set_title(f'unique_id={id}', fontsize=10)
 

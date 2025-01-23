@@ -14,7 +14,8 @@ __all__ = [
 def _decomposer(
         df : pd.DataFrame, 
         time_col : str = 'ds', 
-        target_col : str = 'y'
+        target_col : str = 'y',
+        period : int = 7
     ) -> pd.DataFrame:
     _df = df.copy()
 
@@ -22,6 +23,7 @@ def _decomposer(
         x=_df.set_index(time_col)[target_col], 
         model='additive', 
         two_sided=True, 
+        period=period,
         extrapolate_trend='freq'
     )
 
@@ -37,7 +39,8 @@ def decompose(
     df : pd.DataFrame, 
     time_col : str = 'ds', 
     target_col : str = 'y',
-    id_col : str = 'unique_id'
+    id_col : str = 'unique_id',
+    period : int = 7
 ) -> pd.DataFrame:  
     """Decompõe múltiplas séries temporais usando `statsmodels.tsa.seasonal.seasonal_decompose`.
 
@@ -54,7 +57,7 @@ def decompose(
 
     for i in df[id_col].unique():
         decomposed_df.append(
-            _decomposer(df.loc[df[id_col] == i], time_col=time_col, target_col=target_col)
+            _decomposer(df.loc[df[id_col] == i], time_col=time_col, target_col=target_col, period=period)
         )
     
     return pd.concat(decomposed_df, ignore_index=True)
