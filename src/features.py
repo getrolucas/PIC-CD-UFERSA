@@ -146,3 +146,20 @@ def lasso_feature_selection(
     features = res.feature_names_in_[lasso.coef_!=0]  
     
     return list(features)
+
+def add_trend(
+        train_df : pd.DataFrame,
+        test_df : pd.DataFrame
+) -> pd.DataFrame:
+    """Adiciona índice t para modelar tendência linear.
+
+    Args:
+        train_df (pd.DataFrame): Dados de treino.
+        test_df (pd.DataFrame): Dados de teste.
+
+    Returns:
+        tuple(pd.DataFrame, pd.DataFrame): Dados de treino e teste com coluna `trend` adicionada.
+    """
+    train_df['trend'] = train_df.index
+    test_df['trend'] = test_df.index + train_df.index.max() + 1
+    return train_df, test_df
