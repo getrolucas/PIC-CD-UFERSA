@@ -1,3 +1,4 @@
+from typing import Tuple
 import pandas as pd
 import numpy as np
 import holidays
@@ -95,15 +96,14 @@ def add_calendar_features(
     Returns:
         pd.DataFrame: DataFrame expandido com as features.
     """
-    df['day'] = df[time_col].dt.day
-    df['month_end'] = df[time_col].dt.is_month_end.astype(int)
+    df['dia'] = df[time_col].dt.day
     df['feriado'] = df[time_col].apply(_feriados)
-    df['day_of_week'] = df[time_col].dt.day_of_week
-    df['week'] = df[time_col].dt.isocalendar().week.astype(int)
-    df['month'] = df[time_col].dt.month
-    df['quarter'] = df[time_col].dt.quarter
+    df['dia_da_semana'] = df[time_col].dt.day_of_week
+    df['semana'] = df[time_col].dt.isocalendar().week.astype(int)
+    df['mes'] = df[time_col].dt.month
 
     return df
+
 
 
 def add_lagged_features(
@@ -150,7 +150,7 @@ def lasso_feature_selection(
 def add_trend(
         train_df : pd.DataFrame,
         test_df : pd.DataFrame
-) -> pd.DataFrame:
+) -> Tuple[pd.DataFrame, pd.DataFrame]:
     """Adiciona índice t para modelar tendência linear.
 
     Args:
@@ -162,4 +162,4 @@ def add_trend(
     """
     train_df['trend'] = train_df.index
     test_df['trend'] = test_df.index + train_df.index.max() + 1
-    return train_df, test_df
+    return (train_df, test_df)
