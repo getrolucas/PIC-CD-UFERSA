@@ -4,4 +4,21 @@ version = "0.1.0"
 description = "Add your description here"
 readme = "README.md"
 requires-python = ">=3.13"
-dependencies = []
+dependencies = [
+    "coreforecast==0.0.12",
+    "feature-engine==1.8.2",
+    "holidays==0.58",
+    "ipywidgets==8.1.5",
+    "jupyter==1.1.1",
+    "notebook==7.2.2",
+    "numpy>=2.2.5",
+    "outlier-utils==0.0.5",
+    "pandas==2.2.3",
+    "scikit-learn==1.5.2",
+    "scipy==1.14.1",
+    "seaborn>=0.13.2",
+    "statsmodels==0.14.4",
+    "swifter==1.4.0",
+    "utilsforecast>=0.2.12",
+    "xgboost==2.1.3",
+]
